@@ -1,0 +1,6 @@
+flask
+flask_mail
+python-dotenv
+psycopg2-binary
+redis
+rq
