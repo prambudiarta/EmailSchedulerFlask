@@ -143,7 +143,7 @@
           <option value="2">2</option>
           <option value="3">3</option>
         </select>
-        <input type="text" required id="subject" name='mailAddress' placeholder="Email Receiver">
+        <input type="email" required id="subject" name='mailAddress' placeholder="Email Receiver">
         <button type="submit">Submit</button>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
