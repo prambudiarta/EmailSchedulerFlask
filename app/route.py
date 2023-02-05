@@ -1,13 +1,11 @@
-from flask import Flask, request, render_template, flash, redirect
-import os
-import psycopg2   
-from dotenv import load_dotenv
+from flask import request, render_template, flash, redirect
 from flask_mail import Mail, Message
 import redis 
 from rq import Queue
-from datetime import datetime, timedelta
+from datetime import datetime
 import time
 import threading
+from app import app, connection
 
 
 ### Database Query
@@ -38,23 +36,7 @@ INSERT_EVENT = ("INSERT INTO event (eventId, desc) VALUES (%s, %s);")
 
 GET_EVENT_ID = "SELECT * FROM event;"
 
-# Loading Enviroment
 
-load_dotenv()
-url = os.getenv("DATABASE_URL")
-connection = psycopg2.connect(url)
-
-# APP Initialize
-
-app = Flask(__name__)
-app.secret_key = 'thisissecretkey'
-app.permanent_session_lifetime = timedelta(days=1)
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
-app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL')
-app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS')
 mail = Mail(app)
 r = redis.Redis()
 scheduler = Queue(connection=r)
