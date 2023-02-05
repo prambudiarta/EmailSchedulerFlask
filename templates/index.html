@@ -15,7 +15,7 @@
       font-size: 14px; 
       color: #666;
       }
-      input, textarea { 
+      input, textarea, select { 
       outline: none;
       }
       body {
@@ -91,6 +91,7 @@
       padding: 40px;
       }
       .form-inner input,
+      .form-inner select,
       .form-inner textarea {
       display: block;
       width: 100%;
@@ -132,8 +133,16 @@
       <div class="form-right-decoration"></div>
       <div class="circle"></div>
       <div class="form-inner">
+        <ul>
+          <li><a href="/register_receiver">Register Email Receiver</a></li>
+        </ul>
         <h1>Save Email</h1>
-        <input type="text" required id='eid' name='eventId' placeholder="Event ID">
+        <select required id='eid' name='eventId'>
+          <option selected="true" value='' disabled>Email Event ID</option> 
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
         <input type="text" required id="subject" name='emailSubject' placeholder="Email Subject">
         <textarea id="body" required name='emailContent' placeholder="Email Body" rows="5"></textarea>
         <h3>Sent Schedule</h3>
@@ -146,9 +155,6 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-        <!-- {% for message in get_flashed_messages() %}
-          
-        {% endfor %} -->
       </div>
     </form>
   </body>
