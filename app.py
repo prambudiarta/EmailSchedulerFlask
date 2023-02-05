@@ -28,6 +28,8 @@ INSERT_RECEIVER_MAIL = ("INSERT INTO receiver (eventId, mailAddress) VALUES (%s,
 
 GET_USER_ID = "SELECT mailAddress FROM receiver WHERE eventId = %s;"
 
+CHECK_IF_USER_REGISTERED = "SELECT mailAddress FROM receiver WHERE eventId = %s AND mailAddress = %s;"
+
 # EVENT TABLE
 
 CREATE_EVENT_TABLE = ("CREATE TABLE IF NOT EXISTS event (id SERIAL PRIMARY KEY, eventId INTEGER, desc TEXT);")
@@ -82,7 +84,7 @@ def scheduledMail():
         flash("Time Invalid!")
         return redirect('/')
 
-@app.route('/register_receiver')
+@app.route('/register_receiver', methods=['GET', 'POST'])
 def registerReceiver():
     if request.method == 'POST':
         eventId = request.form['eventId']
@@ -90,19 +92,27 @@ def registerReceiver():
         with connection:
             with connection.cursor() as cursor:
                 cursor.execute(CREATE_RECEIVER_TABLE)
-                cursor.execute(INSERT_RECEIVER_MAIL, (eventId, mailAddress))
-        connection.commit()
+                cursor.execute(CHECK_IF_USER_REGISTERED, (eventId, mailAddress))
+                exist = cursor.fetchall()
+                if (len(exist) == 0):
+                    cursor.execute(INSERT_RECEIVER_MAIL, (eventId, mailAddress))
+                    connection.commit()
+                else:
+                    flash('Email Already Registered For This Event!')
+                    return render_template('regisEmail.html')
+        flash('Success! Email Registered')
+        return redirect('/register_receiver')
     else:
-        return render_template('index.html')
+        return render_template('regisEmail.html')
 
 @app.post('/register_event')
 def registerEvent():
     eventId = request.form['eventId']
-    mailAddress = request.form['mailAddress']
+    desc = request.form['desc']
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(CREATE_RECEIVER_TABLE)
-            cursor.execute(INSERT_RECEIVER_MAIL, (eventId, mailAddress))
+            cursor.execute(INSERT_RECEIVER_MAIL, (eventId, desc))
     connection.commit()
     return {"id":'OK'}
 
